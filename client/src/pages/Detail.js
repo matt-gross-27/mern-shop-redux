@@ -4,19 +4,20 @@ import { useQuery } from '@apollo/react-hooks';
 
 import { QUERY_PRODUCTS } from "../utils/queries";
 import spinner from '../assets/spinner.gif'
+import Cart from '../components/Cart';
 
 import { useStoreContext } from "../utils/GlobalState";
-import { UPDATE_PRODUCTS } from "../utils/actions";
+import { REMOVE_FROM_CART, UPDATE_CART_QUANTITY, ADD_TO_CART, UPDATE_PRODUCTS } from "../utils/actions";
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
+  const { cart, products } = state;
+  
   const { id: idParam } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});
 
   const { loading, data } = useQuery(QUERY_PRODUCTS);
-
-  const { products } = state
 
   useEffect(() => {
     if (products.length) {
@@ -27,7 +28,30 @@ function Detail() {
         products: data.products
       });
     }
-  }, [products, data, dispatch, idParam])
+  }, [products, data, dispatch, idParam]);
+
+  const addToCart = () => {
+    const itemInCart = cart.find(cartItem => cartItem._id === idParam);
+    if (itemInCart) {
+      dispatch({
+        type: UPDATE_CART_QUANTITY,
+        _id: idParam,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
+      });
+    } else {
+      dispatch({
+        type: ADD_TO_CART,
+        product: { ...currentProduct, purchaseQuantity: 1 }
+      });
+    }
+  };
+
+  const removeFromCart = () => {
+    dispatch({
+      type: REMOVE_FROM_CART,
+      _id: idParam
+    })
+  }
 
   return (
     <>
@@ -47,12 +71,14 @@ function Detail() {
             <strong>Price:</strong>
             ${currentProduct.price}
             {" "}
-            <button>
+            <button onClick={addToCart}>
               Add to Cart
             </button>
-            <button>
-              Remove from Cart
-            </button>
+            {cart.find(p => p._id === idParam) &&
+              <button onClick={removeFromCart}>
+                Remove from Cart
+              </button>
+            }
           </p>
 
           <img
@@ -64,6 +90,8 @@ function Detail() {
       {
         loading ? <img src={spinner} alt="loading" /> : null
       }
+
+      <Cart />
     </>
   );
 };
