@@ -1,22 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { UPDATE_CATEGORIES, UPDATE_CURRENT_CATEGORY } from "../../utils/actions";
+import { useStoreContext } from "../../utils/GlobalState";
 import { useQuery } from '@apollo/react-hooks';
 import { QUERY_CATEGORIES } from "../../utils/queries";
 
-function CategoryMenu({ setCategory }) {
+function CategoryMenu() {
+  const [state, dispatch] = useStoreContext();
+
+  const { categories } = state;
+  
   const { data: categoryData } = useQuery(QUERY_CATEGORIES);
-  const categories = categoryData?.categories || [];
+
+  useEffect(() => {
+    // if category data exists of has been changed from the response of useQuery run dispatch()
+    if (categoryData) {
+      dispatch({
+        type: UPDATE_CATEGORIES,
+        categories: categoryData.categories
+      });
+    }
+  }, [categoryData, dispatch]);
+
+  const handleClick = id => {
+    dispatch({
+      type: UPDATE_CURRENT_CATEGORY,
+      currentCategory: id
+    });
+  };
 
   return (
     <div>
       <h2>Choose a Category:</h2>
-      {categories.map(item => (
+      {categories.map(({ _id, name }) => (
         <button
-          key={item._id}
+          key={_id}
           onClick={() => {
-            setCategory(item._id);
+            handleClick(_id)
           }}
         >
-          {item.name}
+          {name}
         </button>
       ))}
     </div>
