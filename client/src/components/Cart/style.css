@@ -58,21 +58,14 @@
 .cart img {
   width: 100%;
   margin-bottom: .5em;
-  padding: 0 1em;
 }
 
 .cart-item-details {
   width: 100%;
-  padding: 0 1em 1em 1em;
-}
-
-.cart-total {
-  margin-left: 1em;
 }
 
 .checkout {
-  width: calc(100% - 2em);
-  margin: 0 1em;
+  width: 100%;
   text-align: center;
 }
 
@@ -81,6 +74,19 @@
   padding: 0;
   margin: 0 1em;
   border: none;
+  position: relative;
+}
+
+.item-name {
+  position: relative;
+  top: 10px;
+  width: 100%;
+  background-color: var(--light);
+}
+
+.cart-item {
+  position: relative;
+  top: -10px;
 }
 
 @media screen and (max-width: 768px) {

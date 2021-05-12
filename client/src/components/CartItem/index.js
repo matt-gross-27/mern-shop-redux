@@ -42,12 +42,12 @@ function CartItem({ item }) {
 
   return (
     <div className="flex-row cart-item">
+      <div className="item-name">{item.name}, ${item.price}</div>
       <img
         src={`/images/${item.image}`}
         alt=""
       />
       <div className="cart-item-details">
-        <div>{item.name}, ${item.price}</div>
         <div className="d-flex">
           <span>Qty:</span>
           <input
@@ -62,6 +62,7 @@ function CartItem({ item }) {
             🗑
             </span>
         </div>
+        <hr />
       </div>
     </div>
   );
