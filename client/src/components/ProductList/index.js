@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useQuery } from '@apollo/react-hooks';
-
 import ProductItem from "../ProductItem";
 import { QUERY_PRODUCTS } from "../../utils/queries";
 import spinner from "../../assets/spinner.gif"
-
 import { useStoreContext } from "../../utils/GlobalState";
 import { UPDATE_PRODUCTS } from "../../utils/actions";
+import { idbPromise } from '../../utils/helpers';
 
 function ProductList() {
   const [state, dispatch] = useStoreContext();
@@ -16,13 +15,29 @@ function ProductList() {
   const { loading, data } = useQuery(QUERY_PRODUCTS);
 
   useEffect(() => {
+    // once/if data is returned from QUERY_PRODUCTS
     if (data) {
+      // store product data in global state
       dispatch({
         type: UPDATE_PRODUCTS,
         products: data.products
       });
+
+      // save each product to IndexedDB `products` Store using helper function
+      data.products.forEach(product => {
+        idbPromise('products', 'put', product);
+      });
+    // if we have no data and no loading, get products from iDB instead of useQuery
+    } else if (!loading) {
+      idbPromise('products', 'get').then(products => {
+        // set global state for products to iDB response
+        dispatch({
+          type: UPDATE_PRODUCTS,
+          products: products
+        });
+      });
     }
-  }, [data, dispatch])
+  }, [data, loading, dispatch]);
 
   function filterProducts() {
     if (!currentCategory) {
