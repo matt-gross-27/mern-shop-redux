@@ -66,8 +66,8 @@ function Detail() {
         product: { ...currentProduct, purchaseQuantity: 1 }
       });
       // if product isn't in the cart yet, add it to the current shopping cart in IndexedDB
-      idbPromise('cart', 'add', {
-        ...itemInCart,
+      idbPromise('cart', 'put', {
+        ...currentProduct,
         purchaseQuantity: 1
       });
     }

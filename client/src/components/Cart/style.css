@@ -84,6 +84,10 @@
   background-color: var(--light);
 }
 
+.trash {
+  cursor: pointer;
+}
+
 .cart-item {
   position: relative;
   top: -10px;

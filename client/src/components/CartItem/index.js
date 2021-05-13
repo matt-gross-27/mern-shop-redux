@@ -63,9 +63,9 @@ function CartItem({ item }) {
             onChange={handleChangeQuantity}
             onBlur={handleBlurQuantity}
           />
-          <span onClick={removeFromCart} role="img" aria-label="trash">
+          <span onClick={removeFromCart} className="trash" role="img" aria-label="trash">
             🗑
-            </span>
+          </span>
         </div>
         <hr />
       </div>
