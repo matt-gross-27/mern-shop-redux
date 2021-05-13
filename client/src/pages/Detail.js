@@ -55,10 +55,20 @@ function Detail() {
         _id: idParam,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
       });
+      // on update quantity => idb put
+      idbPromise('cart', 'put', {
+        ...itemInCart,
+        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
+      });
     } else {
       dispatch({
         type: ADD_TO_CART,
         product: { ...currentProduct, purchaseQuantity: 1 }
+      });
+      // if product isn't in the cart yet, add it to the current shopping cart in IndexedDB
+      idbPromise('cart', 'add', {
+        ...itemInCart,
+        purchaseQuantity: 1
       });
     }
   };
@@ -67,7 +77,8 @@ function Detail() {
     dispatch({
       type: REMOVE_FROM_CART,
       _id: idParam
-    })
+    });
+    idbPromise('cart', 'delete', { ...currentProduct });
   }
 
   return (
