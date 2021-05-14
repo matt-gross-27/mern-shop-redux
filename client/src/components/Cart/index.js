@@ -1,10 +1,15 @@
 import React, { useEffect } from 'react';
 import CartItem from '../CartItem';
-import Auth from '../../utils/auth';
-import { useStoreContext } from '../../utils/GlobalState';
-import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
 import './style.css';
+import Auth from '../../utils/auth';
+import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from '../../utils/actions';
+import { useStoreContext } from '../../utils/GlobalState';
 import { idbPromise } from "../../utils/helpers";
+import { QUERY_CHECKOUT } from '../../utils/queries';
+import { useLazyQuery } from '@apollo/react-hooks';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 function Cart() {
   const [state, dispatch] = useStoreContext();
@@ -12,7 +17,7 @@ function Cart() {
   useEffect(() => {
     async function getCart() {
       const cart = await idbPromise('cart', 'get');
-      dispatch({ 
+      dispatch({
         type: ADD_MULTIPLE_TO_CART,
         products: [...cart]
       });
@@ -32,16 +37,41 @@ function Cart() {
     state.cart.forEach(item => {
       sum += item.price * item.purchaseQuantity;
     });
-    
+
     if (!sum) {
       return '$...'
-    } 
+    }
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2
     }).format(sum);
   }
+
+  // useLazyQuery HOOK for onclick queries (vs useQuery for on render);
+  const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
+
+  function submitCheckout() {
+    const productIds = [];
+
+    state.cart.forEach(item => {
+      for (let i = 0; i < item.purchaseQuantity; i++) {
+        productIds.push(item._id);
+      }
+    });
+
+    getCheckout({
+      variables: { products: productIds }
+    });
+  }
+
+  useEffect(() => {
+    if (data) {
+      stripePromise.then(res => {
+        res.redirectToCheckout({ sessionId: data.checkout.session })
+      })
+    }
+  }, [data]);
 
   if (!state.cartOpen) {
     return (
@@ -70,9 +100,9 @@ function Cart() {
           </strong>
           {
             Auth.loggedIn() ?
-              <button className="checkout">
+              <button className="checkout" onClick={submitCheckout}>
                 Checkout
-                  </button>
+              </button>
               :
               <p className="checkout">(log in to check out)</p>
           }
