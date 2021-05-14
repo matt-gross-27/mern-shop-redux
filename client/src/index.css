@@ -151,7 +151,11 @@ input:focus {
 }
 
 .flex-end {
-  justify-content: flex-end;
+  bottom: 0;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .mx-1 {
@@ -199,8 +203,22 @@ input:focus {
   text-align: center;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px dotted var(--dark);
+  margin: 3px;
+  width: calc(25% - 6px);
+}
+
 .error-text {
   color: var(--error);
+}
+
+.bottom-line {
+  border-bottom: 1px solid var(--dark); ;
+  width: 100%;
 }
 
 @media screen and (max-width: 768px) {

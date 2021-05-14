@@ -12,6 +12,26 @@ function OrderHistory() {
     user = data.user;
   }
 
+  const mergeLikeProducts = (products) => {
+    const result = [];
+    for (let i = 0; i < products.length; i++) {
+    const duplicateItem = result.find(({ _id }) => products[i]._id === _id);
+      if (duplicateItem) {
+        duplicateItem.purchaseQty ++;
+      } else {
+        result.push({
+          ...products[i], 
+          purchaseQty: 1
+        });
+      }
+    }
+    return result;
+  };
+
+  const orderTotal = (products) => {
+    return products.map(x => x.price).reduce((a, b) => a + b).toFixed(2);
+  }
+
   return (
     <>
       <div className="container my-1">
@@ -24,10 +44,12 @@ function OrderHistory() {
             <h2>Order History for {user.firstName} {user.lastName}</h2>
             {user.orders.map((order) => (
               <div key={order._id} className="my-2">
-                <h3>{new Date(parseInt(order.purchaseDate)).toLocaleDateString()}</h3>
+                <h4 style={{overflowX: 'scroll', flexWrap: 'none'}}>Order#_{order._id}</h4>
+                <h5>Total: ${orderTotal(order.products)}</h5>
+                <h5>Date: {new Date(parseInt(order.purchaseDate)).toLocaleDateString()}</h5>
                 <div className="flex-row">
-                  {order.products.map(({ _id, image, name, price }, index) => (
-                    <div key={index} className="card px-1 py-1">
+                  {mergeLikeProducts(order.products).map(({ _id, image, name, price, purchaseQty }, index) => (
+                    <div key={index} className="card flex-column px-1 py-1">
                       <Link to={`/products/${_id}`}>
                         <img
                           alt={name}
@@ -36,11 +58,15 @@ function OrderHistory() {
                         <p>{name}</p>
                       </Link>
                       <div>
-                        <span>${price}</span>
+                        <div className="flex-row space-between">Price: <span>${price}</span></div>
+                        <div className="flex-row space-between">Quantity:<span>{purchaseQty}</span></div>
+                        <div className="bottom-line"></div>
+                        <div className="flex-row space-between">Subtotal: <span>${(price * purchaseQty).toFixed(2)}</span></div>
                       </div>
                     </div>
                   ))}
                 </div>
+                <hr />
               </div>
             ))}
           </>
