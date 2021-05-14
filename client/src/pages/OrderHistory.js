@@ -23,7 +23,7 @@ function OrderHistory() {
           ...products[i], 
           purchaseQty: 1
         });
-      }
+      } 
     }
     return result;
   };
@@ -74,8 +74,8 @@ function OrderHistory() {
 
       </div>
 
-    </>)
-
-};
+    </>
+  )
+}
 
 export default OrderHistory;

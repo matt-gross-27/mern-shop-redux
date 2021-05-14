@@ -122,6 +122,6 @@ function Detail() {
       <Cart />
     </>
   );
-};
+}
 
 export default Detail;

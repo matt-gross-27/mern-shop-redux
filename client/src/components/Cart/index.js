@@ -21,7 +21,7 @@ function Cart() {
         type: ADD_MULTIPLE_TO_CART,
         products: [...cart]
       });
-    };
+    }
 
     if (!state.cart.length) {
       getCart();
@@ -117,6 +117,6 @@ function Cart() {
       )}
     </div>
   );
-};
+}
 
 export default Cart;

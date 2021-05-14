@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import Auth from "../utils/auth";
 import { ADD_USER } from "../utils/mutations";
 
-function Signup(props) {
+function Signup() {
   const [formState, setFormState] = useState({ email: '', password: '' });
   const [addUser] = useMutation(ADD_USER);
 
@@ -84,7 +84,6 @@ function Signup(props) {
       </form>
     </div>
   );
-
 }
 
 export default Signup;

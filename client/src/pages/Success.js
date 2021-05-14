@@ -49,6 +49,6 @@ function Success() {
       </Jumbotron>
     </div>
   );
-};
+}
 
 export default Success;
