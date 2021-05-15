@@ -3,9 +3,6 @@ import Jumbotron from '../components/Jumbotron';
 import { useMutation } from '@apollo/react-hooks';
 import { ADD_ORDER } from '../utils/mutations';
 import { idbPromise } from '../utils/helpers';
-// import { useStoreContext } from '../utils/GlobalState';
-
-
 
 function Success() {
   const [addOrder] = useMutation(ADD_ORDER);
@@ -43,7 +40,8 @@ function Success() {
   return (
     <div>
       <Jumbotron>
-        <h1>Success!</h1>
+        <h1>Success! 😀</h1>
+        <hr />
         <h2>Thank you for your purchase!</h2>
         <h3>You will now be redirected back to the home page</h3>
       </Jumbotron>
